@@ -1,0 +1,1299 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\usepackage{geometry}               % Márgenes del documento
+\usepackage{amsfonts}
+\usepackage{graphicx}
+
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{color}
+\usepackage[pdftex, colorlinks=true, linkcolor=blue, urlcolor=red, filecolor=magenta, citecolor=blue]{hyperref}
+\definecolor{gray97}{gray}{.97}
+\definecolor{gray75}{gray}{.75}
+\definecolor{gray45}{gray}{.45}
+
+\usepackage{listings}
+\usepackage[usenames,dvipsnames]{xcolor}
+\colorlet{keyword}{blue!100!black!80}
+\colorlet{STD}{Lavender}
+\colorlet{comment}{green!80!black!90}
+
+\lstdefinestyle{vhdl}{
+	language     = VHDL,
+	tabsize=3,
+	basicstyle   = \footnotesize \ttfamily,
+	keywordstyle = [1]\color{keyword}\bfseries,
+	keywordstyle = [2]\color{STD}\bfseries,
+	commentstyle = \color{comment}
+	%breaklines=true,                % sets automatic line breaking
+}
+
+\lstdefinestyle{C}{
+	language     = C,
+	tabsize=3,
+	numbers=left, % Donde se situan los numeros
+	frame=single, % Se pone un marco
+	showstringspaces=false, % No muestre el cuadrado en los espacios de los strings
+	backgroundcolor = \color{gray97},
+	basicstyle   = \footnotesize \ttfamily,
+	keywordstyle = [1]\color{keyword}\bfseries,
+	keywordstyle = [2]\color{STD}\bfseries,
+	breaklines=true,                % sets automatic line breaking
+	commentstyle = \color{comment}
+}
+
+\lstdefinestyle{xml}{
+	language     = XML, %basicstyle=\ttfamily\footnotesize,
+	morestring=[b]",
+	moredelim=[s][\bfseries\color{Maroon}]{<}{\ },
+	moredelim=[s][\bfseries\color{Maroon}]{</}{>},
+	moredelim=[l][\bfseries\color{Maroon}]{/>},
+	moredelim=[l][\bfseries\color{Maroon}]{>},
+	morecomment=[s]{<?}{?>},
+	morecomment=[s]{<!--}{-->},
+	commentstyle=\color{comment},
+	stringstyle=\color{blue},
+	identifierstyle=\color{red},		
+	showstringspaces=false,
+	tabsize=3,
+	numbers=left, % Donde se situan los numeros
+	frame=single, % Se pone un marco
+	backgroundcolor = \color{gray97},
+	basicstyle   = \footnotesize \ttfamily,
+	keywordstyle = [1]\color{keyword}\bfseries,
+	keywordstyle = [2]\color{STD}\bfseries,
+	breaklines=true                % sets automatic line breaking
+}
+
+\lstdefinestyle{miniBash}{
+	language     = bash,
+	tabsize=3,
+	numbers=left, % Donde se situan los numeros
+	frame=none, % Se pone un marco
+	showstringspaces=false, % No muestre el cuadrado en los espacios de los strings
+	backgroundcolor = \color{gray97},
+	basicstyle   = \footnotesize \ttfamily,
+	keywordstyle = [1]\color{keyword}\bfseries,
+	keywordstyle = [2]\color{STD}\bfseries,
+	breaklines=true,                % sets automatic line breaking
+	commentstyle = \color{comment}
+}
+
+\lstdefinestyle{instance}{
+	language     = bash,
+	tabsize=3,
+	numbers=left, % Donde se situan los numeros
+	frame=none, % Se pone un marco
+	showstringspaces=false, % No muestre el cuadrado en los espacios de los strings
+	backgroundcolor = \color{gray75},
+	basicstyle   = \footnotesize \ttfamily,
+	keywordstyle = [1]\color{keyword}\bfseries,
+	keywordstyle = [2]\color{STD}\bfseries,
+	breaklines=true,                % sets automatic line breaking
+	commentstyle = \color{comment}
+}
+
+
+\geometry{a4paper}                  % Tamaño y márgenes del documento
+\geometry{left=2.5cm,top=2.5cm}
+\geometry{bottom=2.5cm,right=2.5cm}
+
+\geometry{driver=dvips,pdftex} % ???
+\setcounter{secnumdepth}{5}    % ???
+\setcounter{tocdepth}{5}       % ???
+
+\setlength{\parskip}{\baselineskip} % Espacio entre párrafos (una linea en blanco)
+
+%--------------------------------------------------------------------------
+\title{\textbf{Informática como servicio}
+\\ \textbf{\emph{OpenStack}}
+}
+\author{Francisco Abel Cedrón Santaeufemia \and \textit{francisco.cedron@udc.es}}
+\date{} %Asi no inserta la fecha
+
+\addto\captionsspanish{
+\def\tablename{Tabla}
+\def\listtablename{Índice de tablas}
+}
+
+\begin{document}
+\maketitle % Pone titulo, autor
+\renewcommand{\abstractname}{Abstract} % El nombre que aparece al principio del abstract
+\begin{abstract}
+Este documento pretende ser una pequeña bitácora del uso de OpenStack en la asignatura de Informática como servicio.
+\end{abstract}
+\renewcommand{\contentsname}{} % Lo que pone en el indice
+{\setlength{\parskip}{0mm} \tableofcontents} % Para que no ponga espacios entre las lineas de indice
+%\vspace{1cm} % Para dejar un espacio con respecto a la tabla
+
+\section{Primer fiasco}
+
+\subsection{Instalación}
+	El comienzo de esta práctica empieza por la instalación de una máquina virtual, que en mi caso ha sido de Virtual Box\footnote{
+	Página de Virtual Box \url{https://www.virtualbox.org/}}, en la que se instalará la versión de 64 bits de escritorio de Ubuntu 12.04\footnote{
+	Ubuntu 12.04 LTS (Precise Pangolin) \url{http://releases.ubuntu.com/12.04/}}. El equipo en el que se ha montado esta máquina virtual con las características que se pueden ver en la tabla \ref{tab:VirtualMachine1Settings} ha sido un MacBook Pro de medidados de 2009 (tabla \ref{tab:MacBookProSettings}).
+
+\begin{table}[h]
+	\begin{center}
+		\caption{Configuración de la primera máquina virtual.}
+		\begin{tabular}{|c|c|}
+\hline
+\emph{Procesador} &
+1 VCPU \\ \hline
+\emph{Memoria} &
+2 GB \\ \hline
+\emph{Disco Duro} &
+30 GB \\ \hline
+		\end{tabular}
+		\label{tab:VirtualMachine1Settings}
+	\end{center}
+\end{table}
+	
+\begin{table}[h]
+	\begin{center}
+		\caption{Equipo sobre el que se monto la primera máquina virtual.}
+		\begin{tabular}{|c|c|}
+\hline
+\emph{Procesador} &
+Intel Core Duo a 2.26 GHz \\ \hline
+\emph{Memoria} &
+DDR3 4 GB a 1067 MHz  \\ \hline
+\emph{Disco Duro} &
+160 GB a 5400 rpm \\ \hline
+		\end{tabular}
+		\label{tab:MacBookProSettings}
+	\end{center}
+\end{table}
+
+	Después de instalar la máquina virtual se ha de proceder a clonar el repositorio donde está el proyecto \emph{DevStack}
+\begin{lstlisting}[style=miniBash]
+$ sudo apt-get install git
+$ git clone https://github.com/openstack-dev/devstack.git
+\end{lstlisting}	
+
+	Una vez tenemos el proyecto descargado hay que empezar con la instalación usando el script \emph{stack.sh} que viene con el proyecto
+\begin{lstlisting}[style=miniBash]
+$ cd devstack; ./stack.sh
+\end{lstlisting}	
+	esto tardará alrededor de 30 minutos.
+	
+	Si tratamos de ejecutar un comando a través del CLI como podría ser \emph{nova image-list} y nos muestra un error, eso se debe a que no tiene cargada la configuración necesaria, para ello basta con cargar el archivo \emph{openrc}
+\begin{lstlisting}[style=miniBash]
+$ source openrc
+\end{lstlisting}		
+
+\subsection{Pruebas}
+	Debido a las características del equipo en el que se realizo las pruebas, estas se realizaban de una manera muy lenta. Por poner unos pocos ejemplos\footnote{Para medir el tiempo de los ejemplos no se tiene en cuenta el tiempo que se tarda en rellenar los datos en los formularios.}, para cargar la página web principal tardaba 46 segundos, el tiempo que tardaba en logearse un usuario ascendía a 97 segundos, para mostrar los proyectos necesitaba de 37 segundos, y el hecho de crear un proyecto requería 19 segundos.
+	
+	A pesar de esta lentitud, se consiguió crear un proyecto y asignarle cuotas. Se pudo crear un usuario y asignarlo al proyecto creado anteriormente. Con esto entramos con el nuevo usuario y creamos un par de claves, además de un grupo de seguridad que permitía la conexión SSH y trafico ICMP. Para probar el siguiente paso se arrancó una nueva instancia y se le asigno una IP flotante para que se pudiese acceder desde el exterior. La instancia que se lanzó fue a partir de la imagen de cirros la cual tardo casi 20 minutos en arrancar.
+	
+	En este punto fue donde se encontró el mayor problema, y no tenía que ver por el tiempo que tardo en estar la instancia en ejecución, si no que venía porque se obtenía un timeout a la hora de intentar acceder a la instancia por SSH.
+
+\section{Cambiando el entorno de la prueba}
+
+	Debido a la lentitud conseguida en el primer intento se cambio la ejecución del portátil a una ejecución en un equipo de sobremesa con las características que se muestran en la tabla \ref{tab:DesktopSettings} con lo que pudimos montar una máquina virtual con la configuración que aparece en la tabla \ref{tab:VirtualMachine2Settings}.
+
+\begin{table}[h]
+	\begin{center}
+		\caption{Equipo sobre el que se monto la segunda máquina virtual.}
+		\begin{tabular}{|c|c|}
+\hline
+\emph{Procesador} &
+Intel Core i7 de 4 núcleos a 3.6 GHz\\ \hline
+\emph{Memoria} &
+DDR3 16 GB a 1600 MHz  \\ \hline
+\emph{Disco Duro} &
+2 de 500GB a 7200 rpm montados en un RAID 1\\ \hline
+		\end{tabular}
+		\label{tab:DesktopSettings}
+	\end{center}
+\end{table}
+
+\begin{table}[h]
+	\begin{center}
+		\caption{Configuración de la primera máquina virtual.}
+		\begin{tabular}{|c|c|}
+\hline
+\emph{Procesador} &
+4 VCPU \\ \hline
+\emph{Memoria} &
+8 GB \\ \hline
+\emph{Disco Duro} &
+40 GB \\ \hline
+		\end{tabular}
+		\label{tab:VirtualMachine2Settings}
+	\end{center}
+\end{table}
+
+\subsection{Instalación}
+
+	Al igual que en la primera prueba necesitamos descargarnos el proyecto de devstack, pero para asegurarnos de que todo pueda funcionar de la manera correcta esta vez se descargará la ultima versión que aparece en la rama estable\cite{OpenStackVersions}. Para ello basta con introducir en la terminal lo siguiente:
+\begin{lstlisting}[style=miniBash]
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt-get dist-update
+$ sudo reboot
+$ sudo apt-get install git
+$ git clone -b stable/icehouse https://github.com/openstack-dev/devstack.git
+\end{lstlisting}	
+
+	Una vez descargada la rama del repositorio, procederemos a crear un archivo llamado \emph{localrc} para indicarle algunos parámetros para la instalación\cite{DevstackLocalrc, NeutronDevstack, DevstackLocalrcGithub, NeutronGithubDevstack}. El contenido del fichero se puede ver a continuación.
+
+\begin{lstlisting}[style=miniBash]
+DEST=/opt/stack
+
+# Logging
+LOGFILE=$DEST/logs/stack.sh.log
+VERBOSE=True
+LOG_COLOR=False
+SCREEN_LOGDIR=$DEST/logs/screen
+
+# Credentials
+ADMIN_PASSWORD=openstack
+MYSQL_PASSWORD=openstack
+RABBIT_PASSWORD=openstack
+SERVICE_PASSWORD=openstack
+SERVICE_TOKEN=tokentoken
+
+# Github's Branch
+GLANCE_BRANCH=stable/icehouse
+HORIZON_BRANCH=stable/icehouse
+KEYSTONE_BRANCH=stable/icehouse
+NOVA_BRANCH=stable/icehouse
+NEUTRON_BRANCH=stable/icehouse
+HEAT_BRANCH=stable/icehouse
+CEILOMETER_BRANCH=stable/icehouse
+
+# Neutron - Networking Service
+DISABLED_SERVICES=n-net
+ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-metering,neutron
+
+# Neutron - Load Balancing
+ENABLED_SERVICES+=,q-lbaas
+
+# Heat - Orchestration Service
+ENABLED_SERVICES+=,heat,h-api,h-api-cfn,h-api-cw,h-eng
+HEAT_STANDALONE=True
+
+# Ceilometer - Metering Service (metering + alarming)
+ENABLED_SERVICES+=,ceilometer-acompute,ceilometer-acentral,ceilometer-collector,ceilometer-api
+ENABLED_SERVICES+=,ceilometer-alarm-notify,ceilometer-alarm-eval
+\end{lstlisting}	
+	
+	Una vez introducido el fichero \emph{localrc} dentro de la carpeta de \emph{devstack} procedemos a su instalación de la siguiente manera:
+\begin{lstlisting}[style=miniBash]
+$ cd devstack
+$ vi localrc
+$ ./stack.sh	
+\end{lstlisting}	
+
+	Durante el proceso de instalación se mostró el mensaje de error \emph{openstack client.shell Exception raised: stevedore$>$=0.14}. Por suerte este fallo está documentado y basta con instalar un paquete concreto\cite{setuptools}. Para ello primero ``quitamos'' los cambios que se pudieron realizar durante la instalación de \emph{devstack} para proceder a instalar la ultima versión de \emph{setuptools} y después empezar de nuevo la instalación de \emph{devstack}.
+\begin{lstlisting}[style=miniBash]
+$ ./unstack.sh
+$ sudo pip install --upgrade setuptools
+$ ./stack.sh	
+\end{lstlisting}
+
+\section{Pruebas realizadas con Horizon}
+
+\subsection{Creación de un proyecto y asignación de quotas}
+	Para empezar a crear el escenario es necesario autenticarse como \emph{admin} usando la IP del equipo donde se instaló \emph{devstack}. La contraseña de \emph{admin} es la que se especificó en el archivo \emph{localrc} que en este caso es \emph{openstack} (véase la figura \ref{fig:AuthAdmin}). Una vez autenticados pulsamos en la barra lateral izquierda  la opción de \emph{proyectos}, que está en el grupo de \emph{Panel de identidad} dentro de \emph{Administrador} y nos aparecerá algo como lo que se puede ver en la figura \ref{fig:AdminInitProjects}. Si pulsamos sobre el botón de \emph{Crear proyecto} nos mostrará un formulario como el de la figura \ref{fig:AdminFormCreateProject} en el que tendremos que darle un nombre al proyecto. Además si pulsamos sobre la pestaña \emph{Cuota} podemos modificar las quotas asociadas a ese proyecto y modificarlas a nuestro gusto (figura \ref{fig:AdminFormCreateProjectQuotas}).
+	
+	Una vez pulsamos sobre el botón de \emph{Crear proyecto} se creará el proyecto mostrándonos una notificación y añadiéndolo en la tabla de proyectos como se puede ver en la figura \ref{fig:AdminProjectCreated}.
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_001.png}
+  \caption{Ventana de inicio de OpenStack para la configuración.}
+  \label{fig:AuthAdmin}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_002.png}
+  \caption{Proyectos iniciales de OpenStack.}
+  \label{fig:AdminInitProjects}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_003.png}
+  \caption{Formulario para la creación de un proyecto.}
+  \label{fig:AdminFormCreateProject}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_004.png}
+  \caption{Modificacion de cuotas durante la creación de un proyecto.}
+  \label{fig:AdminFormCreateProjectQuotas}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_005.png}
+  \caption{Proyecto \emph{fcedron-project} añadido.}
+  \label{fig:AdminProjectCreated}
+\end{figure}
+
+\clearpage
+\subsection{Creación de un usuario y su asignación en un proyecto}
+	En este paso toca crear un usuario y asignarlo al proyecto \emph{fcedron-project} que acabamos de crear. Para ello tendremos que ir a la sección de \emph{Usuarios} que está en el menú que se muestra en la izquierda (véase la figura \ref{fig:AdminInitUsers}). Ahora podremos pulsar sobre el botón \emph{Crear usuario} lo que nos mostrará un formulario como el de la figura \ref{fig:AdminFormCreateUser} en el que tenemos que especificar un nombre de usuario (\emph{fcedron}) con su contraseña, el proyecto en el que estará asignado \emph{fcedron-project} y le asignamos el rol de miembro perteneciente al grupo (\emph{Member}). 
+
+		Una vez pulsamos sobre el botón de \emph{Crear usuario} se creará el usuario mostrándonos una notificación y añadiéndolo en la tabla de usuarios como se puede ver en la figura \ref{fig:AdminUserCreated}.
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_006.png}
+  \caption{Usuarios iniciales de OpenStack.}
+  \label{fig:AdminInitUsers}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_007.png}
+  \caption{Formulario para la creación de un usuario.}
+  \label{fig:AdminFormCreateUser}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_008.png}
+  \caption{Usuario \emph{fcedron} añadido.}
+  \label{fig:AdminUserCreated}
+\end{figure}
+
+\clearpage
+\subsection{Creación de la topología de red}
+	Ahora que tenemos un usuario nuevo llamado \emph{fcedron} podemos dejar de ser el usuario \emph{admin} y entrar con este nuevo usuario. Una vez autenticados con el usuario \emph{fcedron} podemos ver la ``vista general'' en el que nos muestra el uso que tenemos actualmente. Como podemos ver en la imagen \ref{fig:UserFcedron} lo único que tenemos creado es un grupo de seguridad, el que se corresponde al grupo de seguridad por defecto. Además una cosa que ``llama la atención'' es que en la primera prueba no aparecía la opción de \emph{Red}\footnote{
+Esta opción aparece por la configuración empleada en el archivo \emph{localrc} y es necesaria para poder crear una red interna\cite{DevstackLocalrc, NeutronDevstack, DevstackLocalrcGithub, NeutronGithubDevstack}.}
+	 en el menú lateral.
+	
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_010.png}
+  \caption{Vista general del usuario \emph{fcedron}.}
+  \label{fig:UserFcedron}
+\end{figure}
+
+	Si pulsamos sobre la opción de \emph{Topología de red} nos muestra como es la red que tenemos creada actualmente en nuestro proyecto. En la figura \ref{fig:NetworkInit} podemos ver que tenemos creada una red pública. Para hacer la prueba más realista crearemos un router virtual que será el que separé la red pública de una red privada que crearemos.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_011.png}
+  \caption{Topología de red inical.}
+  \label{fig:NetworkInit}
+\end{figure}
+
+	Para crear el router tenemos que pulsar sobre el botón \emph{Crear router}, lo que nos mostrará un formulario como el de la figura \ref{fig:FormCreateRouter} en el que tendremos que darle un nombre al router. Como podemos ver en la figura \ref{fig:NetworkAndRouter} nos creo el router de manear aislada (sin estar conectado a ninguna red). Si pulsamos en el menú de \emph{Routers} nos mostrará el panel de configuración de routers. Ahora tenemos que pulsar sobre el botón \emph{Asignar puerta de enlace} lo que nos mostrará un formulario para conectarlo a la red pública (figura \ref{fig:RouterGateway)}. Como podemos en la figura \ref{fig:NetworkRouterPublic} el router \emph{fcedron-router} ya aparece conectado a la red.
+	
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_012.png}
+  \caption{Formulario para la creación de un router.}
+  \label{fig:FormCreateRouter}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_013.png}
+  \caption{Router \emph{fcedron-router} creado correctamente.}
+  \label{fig:NetworkAndRouter}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_015.png}
+  \caption{Panel de configuración de los routers.}
+  \label{fig:Routers}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_016.png}
+  \caption{Conectando el router \emph{fcedron-router} en la red \emph{public}.}
+  \label{fig:RouterGateway}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_017.png}
+  \caption{Topología de red con el router \emph{fcedron-router} conectado a la red \emph{public}.}
+  \label{fig:NetworkRouterPublic}
+\end{figure}
+
+	Ahora es el momento de crear la red interna donde se pondrán las instancias. Para ello pulsamos sobre el botón \emph{Crear red} lo que nos mostrará un formulario como el de la figura \ref{fig:CreateNetwork} en el que tenemos que asignarle un nombre a la red. Si pulsamos en el botón \emph{Siguiente} podemos ver en la figura \ref{fig:CreateNetworkSubnet} que tenemos indicar la dirección de red en formato CIDR, el nombre de la subred y cual será la puerta de enlace. Si pulsamos en el botón \emph{Siguiente} podemos ver las opciones que nos deja especificar en la red y el botón \emph{Crear} que creará la red privada (véase la figura \ref{fig:CreateNetworkDHCP}).
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_018.png}
+  \caption{Formulario para la creación de una red: Nombre.}
+  \label{fig:CreateNetwork}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_019.png}
+  \caption{Formulario para la creación de una red: Subred. }
+  \label{fig:CreateNetworkSubnet}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_020.png}
+  \caption{Formulario para la creación de una red: Otras opciones. }
+  \label{fig:CreateNetworkDHCP}
+\end{figure}
+
+	Como podemos ver en la figura \ref{fig:NetworkRouterPublicAndPrivate} se ha creado la red \emph{fcedron-network} pero está aislada. Si pulsamos sobre el router \emph{fcedron-router} nos mostrará un enlace para ver los detalles del router como se puede ver en la figura \ref{fig:RouterDetails}. Para conectar el router a la red privada pulsaremos sobre el botón \emph{Añadir interfaz} lo que nos mostrará un formulario para crear una nueva interfaz de red sobre el router (figura \ref{fig:RouterCreateFormInterface}) en el que tenemos que especificar la red a la que estará conectada que en este caso será \emph{fcedron-network}. La dirección IP sería la puerta de enlace de la red \emph{fcedron-network} que es la que especificamos en la figura \ref{fig:CreateNetworkSubnet} y que al ser la primera IP de la red no hace falta especificarla. Una vez que pulsamos sobre el botón \emph{Añadir interfaz} se creará la nueva interfaz y nos indicará con una notificación su creación (figura \ref{fig:RouterCreateInterface}). Ahora si vamos a la sección de \emph{Topología de red} podemos ver que el router está conectado a la red pública y a la red privada (véase la figura \ref{fig:NetworkRouterPublicPrivate}).
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_021.png}
+  \caption{Topología de red con el router \emph{fcedron-router} conectado a la red \emph{public} la red \emph{fcedron-network} aislada.}
+  \label{fig:NetworkRouterPublicAndPrivate}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_023.png}
+  \caption{Detalles del router \emph{fcedron-router}.}
+  \label{fig:RouterDetails}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_024.png}
+  \caption{Formulario para la creación de una nueva interfaz de red en router \emph{fcedron-router}.}
+  \label{fig:RouterCreateFormInterface}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_025.png}
+  \caption{Notificación para la creación de una nueva interfaz de red en router \emph{fcedron-router}.}
+  \label{fig:RouterCreateInterface}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_026.png}
+  \caption{Topología de red con el router \emph{fcedron-router} conectado a las redes \emph{public} y \emph{fcedron-network}.}
+  \label{fig:NetworkRouterPublicPrivate}
+\end{figure}	
+
+\clearpage
+\subsection{Creación del grupo de seguridad}
+	Para añadir un grupo de seguridad tenemos que acceder a su panel de configuración a través de la opción \emph{Acceso y seguridad} dentro de la opción \emph{Compute} del menú lateral. Como podemos ver en la figura \ref{fig:SecurityGroupInit} tenemos un grupo de seguridad \emph{default} que es el grupo de seguridad creado por defecto y el que nos aparecía en las estadísticas de la figura \ref{fig:UserFcedron}. Si pulsamos sobre el botón \emph{Crear grupo de seguridad} nos mostrará un formulario como el de la figura \ref{fig:SecurityGroupFormCreate} en el que tenemos que indicar obligatoriamente un nombre y una descripción. Al pulsar sobre el botón \emph{Crear grupo de seguridad} el grupo de seguridad se creará y nos mostrará una notificación de ello (véase la figura \ref{fig:SecurityGroupCreate}).
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_027.png}
+  \caption{Panel de configuración de los grupos de seguridad.}
+  \label{fig:SecurityGroupInit}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_028.png}
+  \caption{Formulario para la creación de un grupo de seguridad.}
+  \label{fig:SecurityGroupFormCreate}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_029.png}
+  \caption{Notificación para la creación de un grupo de seguridad.}
+  \label{fig:SecurityGroupCreate}
+\end{figure}	
+
+	Si pulsamos sobre el botón \emph{Administrar reglas}, podremos ver, tal y como se muestra en la figura \ref{fig:SecurityGroupRulesInit}, que ya existen dos reglas creadas, que permiten la salida de todo el trafico (tanto de IPv4 como de IPv6). Las reglas que añadiremos serán todo el tráfico ICMP de entrada y todo el tráfico para SSH (puerto TCP número 22). Para crear las reglas tenemos que pulsar sobre el botón \emph{Crear regla} y configuramos primero el tráfico ICMP entrante como se muestra en la figura \ref{fig:SecurityGroupRulesICMP} para después volver a pulsar el botón \emph{Crear regla} para añadir las conexiones ssh como se muestra en la figura \ref{fig:SecurityGroupRulesSSH}. Al final tendremos las reglas que se muestran en la figura \ref{fig:SecurityGroupRules}.
+
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_030.png}
+  \caption{Reglas iniciales del grupo de seguridad.}
+  \label{fig:SecurityGroupRulesInit}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_031.png}
+  \caption{Creación de la regla que permite todo el tráfico ICMP entrante.}
+  \label{fig:SecurityGroupRulesICMP}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_032.png}
+  \caption{Creación de la regla que permite todo el tráfico TCP del puerto 22 (ssh) entrante.}
+  \label{fig:SecurityGroupRulesSSH}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_033.png}
+  \caption{Reglas del grupo de seguridad \emph{fcedron-secgroup}.}
+  \label{fig:SecurityGroupRules}
+\end{figure}	
+
+\clearpage
+\subsection{Creación del par de claves}
+	Ahora crearemos un par de claves para usarlas en la conexión ssh de las instancias, para ello tenemos que estar en la opción \emph{Acceso y seguridad} y pulsar sobre la pestaña \emph{Pares de claves} para acceder al panel de configuración de las claves. Como podemos ver en la figura \ref{fig:PairKeyInit}, inicialmente no tenemos ninguna clave creada. Para poder crearla tenemos que pulsar sobre la botón \emph{Crear par de claves} lo que nos mostrará un formulario como el de la figura \ref{fig:PairKeyFormCreate} en el que tenemos que asignarles un nombre. Una vez pulsamos sobre el botón \emph{Crear par de claves} estás se crearán y nos descargaremos la clave privada en nuestro equipo (véase la figura  \ref{fig:PairKeyCreate}).
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_034.png}
+  \caption{Panel de configuración de las claves.}
+  \label{fig:PairKeyInit}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_035.png}
+  \caption{Formulario para la creación de un par de claves.}
+  \label{fig:PairKeyFormCreate}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_036.png}
+  \caption{Clave \emph{fcedron-keypair} creada.}
+  \label{fig:PairKeyCreate}
+\end{figure}	
+
+
+\clearpage
+\subsection{Creación de una instancia}
+	Para crear una instancia primero tenemos que acceder al panel de instancias al cual se accede en la opción \emph{Instancias} dentro de la opción \emph{Compute} del menú lateral como se muestra en la figura \ref{fig:InstanceInit}. Una vez dentro del panel de configuración podemos pulsar en el botón \emph{Lanzar instancia} para crear una nueva instancia. Estos nos mostrará un formulario para la creación de la instancia como el de la figura \ref{fig:InstanceCreateFormDetails} en el que indicamos el nombre que tendrá la instancia, el sabor a usar y que imagen emplear. En la pestaña \emph{Acceso y seguridad} (figura \ref{fig:InstanceCreateFormSecurityGroup}) podemos indicar que clave usar y a que grupo(s) de seguridad pertenece la instancia. Dentro de la pestaña \emph{Redes} (figura \ref{fig:InstanceCreateFormNetwork}) podemos indicar en que red estará la instancia.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_037.png}
+  \caption{Panel de configuración para las instancias.}
+  \label{fig:InstanceInit}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_038.png}
+  \caption{Formulario para la creación de instancias: Detalles.}
+  \label{fig:InstanceCreateFormDetails}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_039.png}
+  \caption{Formulario para la creación de instancias: Acceso y seguridad.}
+  \label{fig:InstanceCreateFormSecurityGroup}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_040.png}
+  \caption{Formulario para la creación de instancias: Redes.}
+  \label{fig:InstanceCreateFormNetwork}
+\end{figure}	
+
+	Una vez rellenados los formularios de las pestañas pulsamos sobre el botón de \emph{Lanzar} para crear la instantánea y que nos indicará mediante una notificación como el de la figura \ref{fig:InstanceLaunching}. Cuando la instancia esté lista aparecerá el texto \emph{Running} en la columna llamada \emph{Estado de energía}. Si pulsamos sobre el nombre de la instancia veremos los detalles de la instancia \emph{fcedron-instance} como se puede ver en la figura \ref{fig:InstanceDetails}. Si dentro de los detalles pulsamos en la pestaña \emph{Consola} nos aparecerá una consola con la que poder logearnos en la máquina y tendremos acceso a ella (véase la figura \ref{fig:InstanceConsoleAuth}). Si accedemos a ella con el usuario \emph{cirros} y la contraseña \emph{cubswin:)} podremos empezar a realizar pruebas de conectividad. Las más obvias a realizar son las de realizar un ping al router que tiene que estar conectado y otra hacia una máquina en el exterior. Como podemos ver en la figura \ref{fig:InstanceConsolePingRouterGoogle} se obtuvo respuesta del router, pero no se obtuvo respuesta del servidor DNS público que tiene Google. La manera de solucionar este problema es habilitar nat sobre la interfaz de red \emph{eth0} que tiene la máquina virtual sobre la que estamos ejecutando OpenStack. Para poder hacer uso de nat basta con introducir el siguiente comando en una terminal conectada la máquina virtual:
+\begin{lstlisting}[style=miniBash]
+$ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+\end{lstlisting}		
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_041.png}
+  \caption{Arrancando la instancia \emph{fcedron-instance}.}
+  \label{fig:InstanceLaunching}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_043.png}
+  \caption{Detalles de la instancia \emph{fcedron-instance}.}
+  \label{fig:InstanceDetails}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_044.png}
+  \caption{Consola de la instancia \emph{fcedron-instance}.}
+  \label{fig:InstanceConsoleAuth}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_045.png}
+  \caption{Ping hacia el router y el DNS público de google.}
+  \label{fig:InstanceConsolePingRouterGoogle}
+\end{figure}	
+
+	Si después de habilitar nat probamos de nuevo a realizar una petición ping de nuevo al DNS público de Google tendremos respuesta (véase la figura \ref{fig:InstanceConsolePingGoogle}).
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_047.png}
+  \caption{Ping hacia el DNS público de google.}
+  \label{fig:InstanceConsolePingGoogle}
+\end{figure}	
+
+	El siguiente paso a realizar es el de asignarle una IP que no sea de la red interna a la instancia para poder conectarnos a ella desde el exterior. Para ello vamos a la opción \emph{Acceso y seguridad} del menú lateral y pulsamos en la pestaña \emph{IP flotantes} (figura \ref{fig:IPFloatingInit}). Tenemos que pulsar sobre el botón \emph{Asignar IP al proyecto} lo que nos mostrará un formulario para escoger de que Pool selecionar las IP en donde tendremos que indicar que es de la red \emph{public} (véase la figura \ref{fig:IPFloatingCreateForm}). Al pulsar sobre el botón \emph{Asignar IP} nos mostrará una notificación como el de la figura \ref{fig:IPFloatingCreate} indicando que se ha creado correctamente.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_048.png}
+  \caption{Panel de configuración de \emph{IP flotantes}.}
+  \label{fig:IPFloatingInit}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_049.png}
+  \caption{Formulario para la creación de una \emph{IP flotante}.}
+  \label{fig:IPFloatingCreateForm}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_050.png}
+  \caption{Notificación para la creación de una \emph{IP flotante}.}
+  \label{fig:IPFloatingCreate}
+\end{figure}	
+
+	Para asignar la IP a la instancia tenemos que volver al panel de instancias y como se puede ver en la figura \ref{fig:InstanceIPFloatingOption} hay que pulsar sobre el botón \emph{Más} que hay en la columna de \emph{Acciones} y seleccionar la opción \emph{Asociar IP flotante}. Esto nos mostrará un formulario como el de la figura  \ref{fig:InstanceIPFloatingMatchForm}. Al pulsar sobre el botón \emph{Asociar} nos indicará que se asigno correctamente la IP a la instancia mediante una notificación como la de la figura \ref{fig:InstanceIPFloatingMatch}.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_051.png}
+  \caption{Opción para asignar una \emph{IP flotante} a una instancia específica.}
+  \label{fig:InstanceIPFloatingOption}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_052.png}
+  \caption{Formulario para asignar una \emph{IP flotante} a una instancia específica.}
+  \label{fig:InstanceIPFloatingMatchForm}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_053.png}
+  \caption{Notificación de la asignación de una \emph{IP flotante} a una instancia específica.}
+  \label{fig:InstanceIPFloatingMatch}
+\end{figure}	
+
+	Una vez asignada la \emph{IP flotante} a la instancia es momento de probar si se puede conectar a ella mediante ssh (figura \ref{fig:InstanceSSH}) para ello basta con introducir la siguiente sentencia:
+\begin{lstlisting}[style=miniBash]
+$ ssh -i fcedron-keypair.pem cirros@172.24.4.4
+\end{lstlisting}		
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_054.png}
+  \caption{Conexión ssh con la instancia \emph{fcedron-instance}.}
+  \label{fig:InstanceSSH}
+\end{figure}	
+	
+\clearpage
+\subsection{Crear una imagen nueva a partir de la instancia \emph{fcedron-instance}}\label{sec:CreateSnapshot}
+	Para crear una nueva imagen a a partir de una instancia basta con pulsar el botón que aparece en el panel de instancias y pulsar el botón \emph{Crear instantánea} de la columna \emph{Acciones} (figura \ref{fig:InstanceButtonCreateSnapshot}). Esto nos mostrará un formulario como el de la figura \ref{fig:InstanceCreateSnapshotForm} en donde tendremos que asignarle un nombre a la snapshot. Al pulsar sobre el botón \emph{Crear instantánea} nos mostrará una notificación como la de la figura \ref{fig:InstanceCreateSnapshotNotification} indicando que se ha creado correctamente.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_058.png}
+  \caption{Panel de configuración de las instancias.}
+  \label{fig:InstanceButtonCreateSnapshot}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_059.png}
+  \caption{Formulario para la creación de una \emph{Snapshot}}
+  \label{fig:InstanceCreateSnapshotForm}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_060.png}
+  \caption{Notificación para la creación de una \emph{Snapshot}}
+  \label{fig:InstanceCreateSnapshotNotification}
+\end{figure}	
+
+\clearpage
+\subsection{Crear un nuevo sabor y lanzar una instancia a partir de una snapshot}
+	Para poder crear un nuevo sabor tenemos que estar autenticados con el usuario \emph{admin} y acceder a la opción \emph{Sabores} que está en el submenú de \emph{Panel del sistema} dentro del  menú lateral de \emph{Administrador}. En la figura \ref{fig:FlavorInit} se puede ver el panel de configuración de los sabores. Si pulsamos en el botón \emph{Crear sabor} nos mostrará un formulario como el de la figura \ref{fig:FlavorCreateForm} en donde podemos configurar las características del sabor y en la pestaña \emph{Acceso al sabor}, podemos indicar que proyectos pueden usar ese favor (figura \ref{fig:FlavorCreateFormAccess}). Al pulsar sobre el botón \emph{Crear sabor} nos mostrará una notificación como la de la figura \ref{fig:FlavorCreate} indicándonos que se creó correctamente el sabor.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_063.png}
+  \caption{Panel de configuración de los sabores}
+  \label{fig:FlavorInit}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_064.png}
+  \caption{Formulario para la creación de un sabor}
+  \label{fig:FlavorCreateForm}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_065.png}
+  \caption{Formulario para la creación de un sabor: Proyectos de acceso}
+  \label{fig:FlavorCreateFormAccess}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_066.png}
+  \caption{Notificación para la creación de un sabor}
+  \label{fig:FlavorCreate}
+\end{figure}	
+
+	Ahora todos los usuarios dentro del proyecto \emph{fcedron-project} pueden hacer uso de este nuevo sabor. Si accedemos como el usuario \emph{fcedron} en horizon y vamos a la sección de \emph{Imágenes} en el menú lateral y seleccionamos las que están dentro de \emph{Proyecto} podremos ver la snapshot que creamos en el paso \ref{sec:CreateSnapshot} (véase la figura \ref{fig:UserSnapshot}). Si pulsamos el botón de \emph{Lanzar} que está en la columna \emph{Acciones} se mostrará un formulario como el de la figura \ref{fig:LaunchingInstanceFromSnapshot} en donde podemos observar que ya se puede seleccionar el sabor \emph{fcedron-flavor} creado anteriormente. En la pestaña de \emph{Acceso y seguridad} tenemos seleccionamos el grupo de seguridad \emph{fcedron-secgroup} y como par de  claves \emph{fcedron-keypair} (figura \ref{fig:LaunchingInstanceFromSnapshotSecgroup}) mientras que en la pestaña de \emph{Redes} tenemos que seleccionar la red \emph{fcedron-network} (figura \ref{fig:LaunchingInstanceFromSnapshotNetwork}). Al pulsar sobre el botón \emph{Lanzar} nos mostrará una notificación como la de la figura \ref{fig:LaunchingInstanceFromSnapshotCreate} que nos indicará que se creo la instancia correctamente. Además si vamos a la sección de \emph{Topología de red} podemos ver como tenemos las dos instancias dentro de la red tal y como aparece en la imagen \ref{fig:NetworkFull}.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_068.png}
+  \caption{Imágenes creadas por el usuario dentro del proyecto}
+  \label{fig:UserSnapshot}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_069.png}
+  \caption{Lanzando una instancia a partir de una snapshot con el nuevo sabor creado: Detalles}
+  \label{fig:LaunchingInstanceFromSnapshot}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_070.png}
+  \caption{Lanzando una instancia a partir de una snapshot con el nuevo sabor creado: Acceso y seguridad}
+  \label{fig:LaunchingInstanceFromSnapshotSecgroup}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_071.png}
+  \caption{Lanzando una instancia a partir de una snapshot con el nuevo sabor creado: Redes}
+  \label{fig:LaunchingInstanceFromSnapshotNetwork}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_072.png}
+  \caption{Notificación una instancia creada a partir de una snapshot con el nuevo sabor creado}
+  \label{fig:LaunchingInstanceFromSnapshotCreate}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_073.png}
+  \caption{Topología de red con las dos redes, las dos instancias y el router}
+  \label{fig:NetworkFull}
+\end{figure}	
+
+\clearpage
+\subsection{Modificación de las quotas del proyecto \emph{fcedron-project}}
+	Para poder modificar las quotas se tiene que hacer con el usuario \emph{admin} y acceder en la sección de \emph{Proyectos} en el menú lateral. Una vez en el panel de proyectos podemos acceder a la opción de \emph{Modificar cuotas} pulsando sobre el botón \emph{Más} que está en la fila del proyecto \emph{fcedron-project} y de la columna \emph{Acciones} (véase la figura \ref{fig:AdminProjectModifyQuota}). Esto nos mostrará un formulario como el que aparece en la figura \ref{fig:AdminProjectModifyQuotaForm} en el que podemos modificar las quotas que tienen los usuarios que usen el proyecto \emph{fcedron-project}. Modificamos por ejemplo el número de instancias que se pueden crear y cambiamos de 10 a 5, esto hará que cuando el usuario \emph{fcedron} inicie sesión se le muestre una pantalla como la de la figura \ref{fig:UserFcedronPanel} podemos ver que el número de instancias se redujo a 5 en lugar de las 10 que había antes (figura \ref{fig:UserFcedron}).
+
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_075.png}
+  \caption{Panel de configuración de los proyectos}
+  \label{fig:AdminProjectModifyQuota}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_076.png}
+  \caption{Panel de configuración de los proyectos}
+  \label{fig:AdminProjectModifyQuotaForm}
+\end{figure}	
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{img/m_078.png}
+  \caption{Vista general del usuario \emph{fcedron}.}
+  \label{fig:UserFcedronPanel}
+\end{figure}
+
+
+\clearpage
+\section{Pruebas realizadas con \emph{CLI}}
+
+	Las pruebas que se realizaron a través de \emph{Horizon} son las mismas que las que se realizaron con \emph{CLI}\cite{CLI}.
+Para ello partimos de un escenario vacío en donde previamente se eliminó todo lo configurado a través del navegador web.
+
+\subsection{Creación de un proyecto}
+
+	Para la creación de un proyecto se necesita usar el módulo \emph{keystone} así que para probar si funciona correctamente podemos probar a ejecutar el siguiente comando para mostrar los proyectos\cite{KeystoneCLIOpenStack}
+\begin{lstlisting}[style=miniBash]
+$ keystone tenant-list
+Expecting an auth URL via either --os-auth-url or env[OS_AUTH_ENV]
+\end{lstlisting}	
+
+	Como podemos ver nos da un error con lo que podemos probar a cargar los ficheros \emph{localrc} y \emph{openrc}
+\begin{lstlisting}[style=miniBash]
+$ source localrc
+$ source openrc
+$ keystone tenant-list
+You are not authorized to perform the request action, admin required (HTTP 403)
+\end{lstlisting}		
+
+	Una de las razones por la que nos da este error es porque no tiene cargadas las variables de entorno \emph{OS\_SERVICE\_TOKEN} y \emph{OS\_SERVICE\_ENDPOINT}. El valor que se debe asignar a \emph{OS\_SERVICE\_TOKEN} es el valor que le dimos a la variable \emph{SERVICE\_TOKEN} en el fichero \emph{localrc} que en este caso es \emph{tokentoken}. Para el valor de \emph{OS\_SERVICE\_ENDPOINT} hay que ejecutar el siguiente comando\cite{KeystoneCLI}
+\begin{lstlisting}[style=miniBash]
+$ nova endpoints
++-------------+-----------------------------------------------------------+
+| nova        | Value                                                     |
++-------------+-----------------------------------------------------------+
+| adminURL    | http://10.0.2.15:8774/v2/46e6e108db7143b3a586ac7cbd2f889c |
+| id          | 48703f7738084089bda5a72feec7ed7a                          |
+| internalURL | http://10.0.2.15:8774/v2/46e6e108db7143b3a586ac7cbd2f889c |
+| publicURL   | http://10.0.2.15:8774/v2/46e6e108db7143b3a586ac7cbd2f889c |
+| region      | RegionOne                                                 |
+| serviceName | nova                                                      |
++-------------+-----------------------------------------------------------+
++-------------+----------------------------------+
+| neutron     | Value                            |
++-------------+----------------------------------+
+| adminURL    | http://10.0.2.15:9696/           |
+| id          | c33397dcffdb46efa768c795fc693c2d |
+| internalURL | http://10.0.2.15:9696/           |
+| publicURL   | http://10.0.2.15:9696/           |
+| region      | RegionOne                        |
++-------------+----------------------------------+
++-------------+-----------------------------------------------------------+
+| cinderv2    | Value                                                     |
++-------------+-----------------------------------------------------------+
+| adminURL    | http://10.0.2.15:8776/v2/46e6e108db7143b3a586ac7cbd2f889c |
+| id          | 29430b3086374b47bbf566e0412062ac                          |
+| internalURL | http://10.0.2.15:8776/v2/46e6e108db7143b3a586ac7cbd2f889c |
+| publicURL   | http://10.0.2.15:8776/v2/46e6e108db7143b3a586ac7cbd2f889c |
+| region      | RegionOne                                                 |
++-------------+-----------------------------------------------------------+
++-------------+----------------------------------+
+| novav3      | Value                            |
++-------------+----------------------------------+
+| adminURL    | http://10.0.2.15:8774/v3         |
+| id          | 188bbb29b9b04586a20c695ecde8f395 |
+| internalURL | http://10.0.2.15:8774/v3         |
+| publicURL   | http://10.0.2.15:8774/v3         |
+| region      | RegionOne                        |
++-------------+----------------------------------+
++-------------+----------------------------------+
+| s3          | Value                            |
++-------------+----------------------------------+
+| adminURL    | http://10.0.2.15:3333            |
+| id          | 20afc0169f6040609b6d0e9947185a11 |
+| internalURL | http://10.0.2.15:3333            |
+| publicURL   | http://10.0.2.15:3333            |
+| region      | RegionOne                        |
++-------------+----------------------------------+
++-------------+----------------------------------+
+| glance      | Value                            |
++-------------+----------------------------------+
+| adminURL    | http://10.0.2.15:9292            |
+| id          | 2324964da3ab4424935b44560399ef63 |
+| internalURL | http://10.0.2.15:9292            |
+| publicURL   | http://10.0.2.15:9292            |
+| region      | RegionOne                        |
++-------------+----------------------------------+
++-------------+----------------------------------+
+| ceilometer  | Value                            |
++-------------+----------------------------------+
+| adminURL    | http://10.0.2.15:8777/           |
+| id          | 34f4cba9c3ee4e8b95dfbe32020d1ef1 |
+| internalURL | http://10.0.2.15:8777/           |
+| publicURL   | http://10.0.2.15:8777/           |
+| region      | RegionOne                        |
++-------------+----------------------------------+
++-------------+----------------------------------+
+| heat        | Value                            |
++-------------+----------------------------------+
+| adminURL    | http://10.0.2.15:8000/v1         |
+| id          | 0eb66981e5ca4f6aac2a038ebd844c8d |
+| internalURL | http://10.0.2.15:8000/v1         |
+| publicURL   | http://10.0.2.15:8000/v1         |
+| region      | RegionOne                        |
++-------------+----------------------------------+
++-------------+-----------------------------------------------------------+
+| cinder      | Value                                                     |
++-------------+-----------------------------------------------------------+
+| adminURL    | http://10.0.2.15:8776/v1/46e6e108db7143b3a586ac7cbd2f889c |
+| id          | 28afe2d080af4e519c8b636ffd237ffc                          |
+| internalURL | http://10.0.2.15:8776/v1/46e6e108db7143b3a586ac7cbd2f889c |
+| publicURL   | http://10.0.2.15:8776/v1/46e6e108db7143b3a586ac7cbd2f889c |
+| region      | RegionOne                                                 |
++-------------+-----------------------------------------------------------+
++-------------+--------------------------------------+
+| ec2         | Value                                |
++-------------+--------------------------------------+
+| adminURL    | http://10.0.2.15:8773/services/Admin |
+| id          | 5c78f1ce2fe34001a667ae0ec7b33447     |
+| internalURL | http://10.0.2.15:8773/services/Cloud |
+| publicURL   | http://10.0.2.15:8773/services/Cloud |
+| region      | RegionOne                            |
++-------------+--------------------------------------+
++-------------+-----------------------------------------------------------+
+| heat        | Value                                                     |
++-------------+-----------------------------------------------------------+
+| adminURL    | http://10.0.2.15:8004/v1/46e6e108db7143b3a586ac7cbd2f889c |
+| id          | 0893eb2551874a01a7082111b0c352ce                          |
+| internalURL | http://10.0.2.15:8004/v1/46e6e108db7143b3a586ac7cbd2f889c |
+| publicURL   | http://10.0.2.15:8004/v1/46e6e108db7143b3a586ac7cbd2f889c |
+| region      | RegionOne                                                 |
++-------------+-----------------------------------------------------------+
++-------------+----------------------------------+
+| keystone    | Value                            |
++-------------+----------------------------------+
+| adminURL    | http://10.0.2.15:35357/v2.0      |
+| id          | c89a616370fb49c992e2833013caf84b |
+| internalURL | http://10.0.2.15:5000/v2.0       |
+| publicURL   | http://10.0.2.15:5000/v2.0       |
+| region      | RegionOne                        |
++-------------+----------------------------------+
+\end{lstlisting}	
+	y poner la url que aparece en la sección de \emph{keystone}. Si cargamos estas dos variables de entorno podemos ver que se puede mostrar correctamente los proyectos.
+\begin{lstlisting}[style=miniBash]
+$ export OS_SERVICE_TOKEN=tokentoken
+$ export OS_SERVICE_ENDPOINT=http://10.0.2.15:35357/v2.0
+$ keystone tenant-list
++----------------------------------+--------------------+---------+
+|                id                |        name        | enabled |
++----------------------------------+--------------------+---------+
+| 46e6e108db7143b3a586ac7cbd2f889c |       admin        |   True  |
+| afdaa45c70524df388bbcd7c8e1e7cb5 |      alt_demo      |   True  |
+| b5fe3000d2924367a83c0d9c826f341d |        demo        |   True  |
+| e7895ea13a9f498096a9185618603d00 | invisible_to_admin |   True  |
+| 6997d9d1b6b6449bba9d7c07a7aa623b |      service       |   True  |
++----------------------------------+--------------------+---------+
+\end{lstlisting}	
+
+
+	Finalmente creamos el proyecto \emph{fcedron-project} con el siguiente comando	
+\begin{lstlisting}[style=miniBash]
+$ keystone tenant-create --name fcedron-project --description "Desc 4 fcedron-project"
+
+\end{lstlisting}	
+
+\subsection{Creación de un usuario y asignación de un proyecto}
+
+	Para la creación del usuario \emph{fcedron} con contraseña \emph{s3cr3t} y asignarle el proyecto \emph{fcedron-project} hay que añadir la siguiente instrucción
+\begin{lstlisting}[style=miniBash]
+$ keystone user-create --name fcedron --pass s3cr3t --tenant-id fcedron-project
+
+\end{lstlisting}	
+
+\subsection{Creación de la topología de red}
+	Si nos fijamos un momento en los comandos introducidos hasta el momento, en ningún lugar se ha especificado que usuario emplear. Realmente lo que esta haciendo es cogiendo los valores de alguna variables de entorno que cargó del fichero \emph{openrc}. Para poder trabajar con el usuario \emph{fcedron} tenemos que especificarlo y para ello tenemos dos opciones
+\begin{enumerate}
+{\setlength{\parskip}{0mm}
+	\item En cada comando que usemos añadir al final los parámetros necesarios (que en este caso sería \emph{--os-user-name=fcedron --os-password=s3cr3t --os-tenant-name=fcedron-project})
+	\item Usando las variables de entorno adecuadas.
+}
+\end{enumerate}
+	Aquí la opción que se seguirá es la segunda así que crearemos las variables de entorno para indicar el usuario, su contraseña y proyecto que usará
+\begin{lstlisting}[style=miniBash]
+$ export OS_USERNAME=fcedron
+$ export OS_PASSWORD=s3cr3t
+$ export OS_TENANT_NAME=fcedron-project
+\end{lstlisting}
+
+	El primer paso es crear la red interna \emph{fcedron-network} que se usará para conectar las instancias y la subred \emph{fcedron-subnet} que tendrá\cite{NetworkingCLIOpenStack}
+\begin{lstlisting}[style=miniBash]
+$ neutron net-create fcedron-network
+$ neutron subnet-create fcedron-network 10.0.0.0/24 --name fcedron-subnet --gateway 10.0.0.1
+\end{lstlisting}
+
+	A continuación tendremos que crear el router \emph{fcedron-router} e indicarle la red\footnote{
+Para ver las redes que están creadas podemos ejecutar el comando \emph{neutron net-list}	
+} que usará como puerta de enlace.
+\begin{lstlisting}[style=miniBash]
+$ neutron router-gateway-set fcedron-router public
+\end{lstlisting}
+
+	Una vez conectado el router \emph{fcedron-router} a la red \emph{public} hay que conectarlo a la red interna\footnote{
+Para ver las subredes creadas podemos ejecutar el comando \emph{neutron subnet-list}}
+\begin{lstlisting}[style=miniBash]
+$ neutron router-interface-add fcedron-router fcedron-subnet
+\end{lstlisting}
+
+\subsection{Creación de un grupo de seguridad}
+	Para añadir un \emph{firewall} como medida de seguridad crearemos un grupo de seguridad con el siguiente comando\cite{ComputeCLIOpenStack}
+\begin{lstlisting}[style=miniBash]
+$ nova secgroup-create fcedron-secgroup "Desc 4 secgroup"
+\end{lstlisting}
+
+	Ahora añadimos la conexión por SSH desde el exterior\footnote{
+Una de las cosas que podemos comprobar es las reglas que tiene creadas con el comando \emph{nova secgroup-list-rules fcedron-secgroup}
+}
+\begin{lstlisting}[style=miniBash]
+$ nova secgroup-add-rule fcedron-secgroup tcp 22 22 0.0.0.0/0
+\end{lstlisting}
+
+\subsection{Creación de un par de claves}
+	Para poder crear las claves que se emplearán con las instancias tenemos que lanzar el siguiente comando
+\begin{lstlisting}[style=miniBash]
+$ nova keypair-add fcedron-keypair > fcedron-keypair.pem
+$ chmod 400 fcedron-keypair.pem
+\end{lstlisting}
+
+\subsection{Creación de una instancia}
+	Para poder crear una instancia lo primero que necesitamos es saber que sabores e imágenes tenemos disponibles.
+\begin{lstlisting}[style=miniBash]
+$ nova flavor-list
++----+-----------+-----------+------+-----------+------+-------+-------------+----------+
+| ID | Name      | Memory_MB | Disk | Ephemeral | Swap | VCPUs | RXTX_Factor | Is_Public|
++----+-----------+-----------+------+-----------+------+-------+-------------+----------+
+| 1  | m1.tiny   | 512       | 1    | 0         |      | 1     | 1.0         | True     |
+| 2  | m1.small  | 2048      | 20   | 0         |      | 1     | 1.0         | True     |
+| 3  | m1.medium | 4096      | 40   | 0         |      | 2     | 1.0         | True     |
+| 4  | m1.large  | 8192      | 80   | 0         |      | 4     | 1.0         | True     |
+| 42 | m1.nano   | 64        | 0    | 0         |      | 1     | 1.0         | True     |
+| 451| m1.heat   | 512       | 0    | 0         |      | 1     | 1.0         | True     |
+| 5  | m1.xlarge | 16384     | 160  | 0         |      | 8     | 1.0         | True     |
+| 84 | m1.micro  | 128       | 0    | 0         |      | 1     | 1.0         | True     |
++-----+-----------+-----------+------+-----------+------+-------+-------------+-----------+
+\end{lstlisting}
+
+\begin{lstlisting}[style=miniBash]
+$ nova image-list
++--------------------------------------+---------------------------------+--------+--------+
+| ID                                   | Name                            | Status | Server |
++--------------------------------------+---------------------------------+--------+--------+
+| 4432cf3c-95d5-4868-be84-814ce97c5659 | cirros-0.3.1-x86_64-uec         | ACTIVE |        |
+| 6785a155-3840-4086-8db5-97c463a3cf6d | cirros-0.3.1-x86_64-uec-kernel  | ACTIVE |        |
+| f2d6f34f-fab0-40b3-95d8-83e547cbe382 | cirros-0.3.1-x86_64-uec-ramdisk | ACTIVE |        |
+| eff3fc9b-bfcb-4ede-bd2f-734d7b080dda | cirros-0.3.2-x86_64-uec         | ACTIVE |        |
+| 8856bfc1-f037-4c69-8600-2359c55a3089 | cirros-0.3.2-x86_64-uec-kernel  | ACTIVE |        |
+| 3f7419d1-e6a3-48f7-ad7e-49b3242eebec | cirros-0.3.2-x86_64-uec-ramdisk | ACTIVE |        |
++--------------------------------------+---------------------------------+--------+--------+
+\end{lstlisting}
+
+	El siguiente paso es lanzar la instancia, para ello escogeremos el sabor con identificador \emph{1} y la imagen \emph{cirros-0.32-x86\_64-uec}
+\begin{lstlisting}[style=miniBash]
+$ nova boot --flavor 1 --image cirros-0.32-x86_64-uec --key_name fcedron-keypair --security-group fcedron-secgroup fcedron-instance1
+\end{lstlisting}
+	Una vez creada la instancia vamos a crear una \emph{IP flotante}\footnote{
+Para ver las IP flotantes basta con ejecutar el comando \emph{nova floating-ip-list}
+} para poder acceder a la instancia \emph{fcedron-instance1}
+\begin{lstlisting}[style=miniBash]
+$ nova floating-ip-create public
++-------------+-----------+----------+--------+
+| Ip          | Server Id | Fixed Ip | Pool   |
++-------------+-----------+----------+--------+
+| 172.24.4.11 | -         | -        | public |
++-------------+-----------+----------+--------+
+$nova add-floating-ip fcedron-instance1 172.24.4.11
+\end{lstlisting}
+
+	Ahora podemos conectarnos a la instancia mediante ssh
+\begin{lstlisting}[style=miniBash]
+$ ssh -i fcedron-keypair.pem cirros@172.24.4.11
+\end{lstlisting}
+
+\subsection{Creación de una imagen nueva a partir de la instancia \emph{fcedron-instance1}}
+	Para la creación de la imagen\footnote{
+Para ver las imágenes disponibles tenemos que ejecutar el comando \emph{nova image-list}
+} basta con introducir el siguiente comando
+\begin{lstlisting}[style=miniBash]
+$ nova image-create fcedron-instance1 fcedron-snapshot
+\end{lstlisting}
+
+\subsection{Crear un nuevo sabor y lanzar una instancia a partir de una snapshot}
+	Para la creación de un nuevo sabor debemos hacerlo con permisos de administrador.
+\begin{lstlisting}[style=miniBash]
+$ export OS_USERNAME=admin
+$ export OS_PASSWORD=openstack
+$ export OS_TENANT_NAME=admin
+\end{lstlisting}
+
+	Ahora creamos un nuevo sabor llamado \emph{fcedron-flavor} con el identificador\footnote{
+Para saber los sabores creados y conocer sus identificadores podemos ejecutar el comando \emph{nova flavor-list}	
+} \emph{123}, 1GB de ram, 0GB de disco y con 2 VCPUs. Además permitimos su uso al proyecto \emph{fcedron-project}
+\begin{lstlisting}[style=miniBash]
+$ nova flavor-create fcedron-flavor 123 1024 0 2
+$ nova flavor-access-add fcedron-flavor fcedron-project
+\end{lstlisting}
+
+	Ahora volvemos a modificar las variables para acceder como el usuario \emph{fcedron}
+\begin{lstlisting}[style=miniBash]
+$ export OS_USERNAME=fcedron
+$ export OS_PASSWORD=s3cr3t
+$ export OS_TENANT_NAME=fcedron-project
+\end{lstlisting}
+	y volvemos a lanzar una instancia a partir de la imagen creada anteriormente y con el nuevo sabor que acabamos de crear
+\begin{lstlisting}[style=miniBash]
+$ nova  boot --flavor 123 --image fcedron-snapshot --keyname fcedron-keypair --security-group fcedron-secgroup fcedron-instance2
+\end{lstlisting}
+
+	Para poder conectarnos a esta nueva instancia (\emph{fcedron-instance2}) necesitamos crear una IP flotante y asignársela
+\begin{lstlisting}[style=miniBash]
+$ nova floating-ip-create public
+
+$ nova add-floating-ip fcedron-instance2 172.24.4.12
+\end{lstlisting}
+
+	Ahora podemos conectarnos a la instancia mediante ssh
+\begin{lstlisting}[style=miniBash]
+$ ssh -i fcedron-keypair.pem cirros@172.24.4.12
+\end{lstlisting}
+
+\subsection{Modificación de las quotas del proyecto \emph{fcedron-project}}
+	Para realizar este paso tenemos que conectarnos con un perfil de administrador, así que para ello modificamos de nuevo las variables
+\begin{lstlisting}[style=miniBash]
+$ export OS_USERNAME=admin
+$ export OS_PASSWORD=openstack
+$ export OS_TENANT_NAME=admin
+\end{lstlisting}
+
+	Ahora vamos a modificar el numero de IP flotantes que pueden crear los usuarios en el proyecto \emph{fcedron-project}
+\begin{lstlisting}[style=miniBash]
+$ nova quota-update --floating-ips 5 fcedron-project
+\end{lstlisting}
+
+	Volvemos a modificar las variables para usar al usuario \emph{fcedron}
+\begin{lstlisting}[style=miniBash]
+$ export OS_USERNAME=fcedorn
+$ export OS_PASSWORD=s3cr3t
+$ export OS_TENANT_NAME=fcedron-project
+\end{lstlisting}
+
+\subsection{Eliminar lo creado}
+	Para la eliminación de los elementos con \emph{horizon} basta con ir por cada opción del menú que aparece en el lateral izquierdo y pulsar el botón \emph{Eliminar} o \emph{Terminar}, realizar esto mediante la línea de comandos no es tan trivial. Para ello hay que introducir los comandos adecuados que son los siguientes:
+\begin{lstlisting}[style=miniBash]
+$ nova delete fcedron-instance1 fcedron-instance2
+$ nova floating-ip-delete 172.24.4.12
+$ nova floating-ip-delete 172.24.4.11
+$ nova keypair-delete fcedorn-keypair
+$ nova secgroup-delete fcedron-secgroup
+$ nova image-delete fcedron-snapshot
+$ neutron router-interface-delete fcedron-router fcedron-subnet
+$ neutron net-delete fcedron-network
+$ neutron router-delete fcedron-router
+$ export OS_USERNAME=admin
+$ export OS_PASSWORD=openstack
+$ export OS_TENANT_NAME=admin
+$ nova flavor-delete 123
+$ keystone user-delete fcedron
+$ keystone tenant-delete fcedron-project
+\end{lstlisting}
+	
+
+%\begin{lstlisting}[style=miniBash]
+%$ ssh fcedron@minibay.cloudapp.net
+%\end{lstlisting}
+%
+%\begin{figure}[h]
+%  \centering
+%    \includegraphics[width=0.75\textwidth]{img/m_p011.png}
+%  \caption{Opción para establecer una contraseña de administrador para MySQL.}
+%  \label{fig:setPassRootMySQL}
+%\end{figure}
+
+
+%\begin{enumerate}
+%{\setlength{\parskip}{0mm}
+%	\item Lanzar dos instancias en zonas de disponibilidad diferentes.
+%	\item Crear un volumen EBS de 1GB en una de esas zonas y conectarlo a la instancia de esa zona.
+%}
+%\end{enumerate}
+
+
+%\begin{figure}[h]
+%  \centering
+%    \includegraphics[width=0.75\textwidth]{img/m_p4_001.png}
+%  \caption{Servicios disponibles de AWS.}
+%  \label{fig:ChooseIAM}
+%\end{figure}
+
+%\begin{lstlisting}[style=miniBash]
+%$ wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+%$ unzip awscli-bundle.zip
+%$ ./awscli-bundle/install -b $HOME/bin/aws
+%$ echo "export PATH=$PATH:$HOME/bin" >> $HOME/.bash_profile
+%$ touch $HOME/.aws/config
+%\end{lstlisting}
+
+%\begin{lstlisting}
+%[default]
+%aws_access_key_id = AKIAJ6B7ZE52JQVR2K5Q 
+%aws_secret_access_key = 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
+%region = us-east-1
+%output = text
+%\end{lstlisting}
+
+
+\clearpage
+%\newpage
+
+%{\setlength{\parskip}{0mm} \listoftables}
+
+{\setlength{\parskip}{0mm} \listoffigures} % Para que no ponga espacios entre las lineas de indice
+
+% Bibliografía.
+%-----------------------------------------------------------------
+\clearpage
+
+\renewcommand{\bibname}{Referencias}
+\begin{thebibliography}{99}
+\bibitem{OpenStackVersions}
+OpenStack. Releases
+
+\url{https://wiki.openstack.org/wiki/Releases}
+\bibitem{DevstackLocalrc}
+Devstack. Configuration: Making it go my way.
+
+\url{http://devstack.org/configuration.html}
+\bibitem{NeutronDevstack}
+NeutronDevstack
+
+\url{https://wiki.openstack.org/wiki/NeutronDevstack}
+\bibitem{DevstackLocalrcGithub}
+Devstack Localrc
+
+\url{https://github.com/nec-openstack/devstack-neutron-nec-openflow/wiki/Devstack-localrc}
+\bibitem{NeutronGithubDevstack}
+Configuración de Neutron. Proyecto \emph{Devstack} alojado en github
+
+\url{https://github.com/openstack-dev/devstack#neutron}
+\bibitem{setuptools}
+Devstack. Problema con \emph{setuptools}.
+
+\url{https://review.openstack.org/#/c/98263/}
+
+\url{https://ask.openstack.org/en/question/31896/error-openstackclientshellexception-raised/}
+\bibitem{CLI}
+Command-Line Interface Reference
+
+\url{http://docs.openstack.org/cli-reference/content/}
+\bibitem{KeystoneCLI}
+\textbf{Keystone} command line utility
+
+\url{http://docs.openstack.org/developer/python-keystoneclient/man/keystone.html}
+\bibitem{KeystoneCLIOpenStack}
+Identity service command-line client
+
+\url{http://docs.openstack.org/cli-reference/content/keystoneclient_commands.html}
+\bibitem{NetworkingCLIOpenStack}
+Networking command-line client
+
+\url{http://docs.openstack.org/cli-reference/content/neutronclient_commands.html}
+\bibitem{ComputeCLIOpenStack}
+Compute command-line client
+
+\url{http://docs.openstack.org/cli-reference/content/novaclient_commands.html}
+%\bibitem{OrchestrationCLIOpenStack}
+%Orchestration command-line client
+%
+%\url{http://docs.openstack.org/cli-reference/content/heatclient_commands.html}
+\end{thebibliography}
+
+\end{document}
